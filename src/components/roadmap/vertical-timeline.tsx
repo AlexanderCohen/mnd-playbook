@@ -40,9 +40,9 @@ export function VerticalTimeline({
   const showBulbar = activePathway === 'all' || activePathway === 'bulbar';
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full flex flex-col">
       {/* Timeline Section */}
-      <div className="flex-1">
+      <div className="w-full">
         <div className="w-full py-8 md:py-12 px-4 md:px-6 lg:px-8">
           {/* Title */}
           <div className="text-center mb-12 md:mb-16">

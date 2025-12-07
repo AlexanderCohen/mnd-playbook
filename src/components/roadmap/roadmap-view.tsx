@@ -29,11 +29,11 @@ export function RoadmapView() {
   const stagesByPathway = getStagesGroupedByPathway(activePathway);
 
   return (
-    <div className="flex h-full flex-col relative">
+    <div ref={timelineScrollRef} className="h-screen flex flex-col relative overflow-auto">
       {/* Scroll Controls for the entire roadmap */}
-      <ScrollControls containerRef={timelineScrollRef} position="right" />
+      <ScrollControls containerRef={timelineScrollRef} position="right" autoHide={false} />
       {/* Header - Compact and clean */}
-      <div className="border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 lg:py-6">
+      <div className="border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 lg:py-6 flex-shrink-0">
         <div className="w-full">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -127,7 +127,7 @@ export function RoadmapView() {
       </div>
 
       {/* Main timeline - takes all available space */}
-      <div ref={timelineScrollRef} className="flex-1 min-h-0 overflow-auto">
+      <div className="flex-1 min-h-0">
         <VerticalTimeline
           lowerLimbStages={stagesByPathway.lowerLimb}
           bulbarStages={stagesByPathway.bulbar}

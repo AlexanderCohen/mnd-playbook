@@ -43,16 +43,35 @@ export function ScrollControls({
 }: ScrollControlsProps) {
   const [canScrollUp, setCanScrollUp] = React.useState(false);
   const [canScrollDown, setCanScrollDown] = React.useState(false);
+  const instanceId = React.useRef(`scroll-${Math.random().toString(36).substr(2, 9)}`).current;
 
   // Check scroll position to enable/disable buttons
   const checkScrollPosition = React.useCallback(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container) {
+      console.log(`[ScrollControls ${instanceId}] No container ref`);
+      return;
+    }
 
     const { scrollTop, scrollHeight, clientHeight } = container;
-    setCanScrollUp(scrollTop > 0);
-    setCanScrollDown(scrollTop < scrollHeight - clientHeight - 10);
-  }, [containerRef]);
+    const canUp = scrollTop > 0;
+    const canDown = scrollTop < scrollHeight - clientHeight - 10;
+
+    console.log(`[ScrollControls ${instanceId}] Check:`, {
+      containerElement: container.tagName,
+      containerClass: container.className,
+      scrollTop,
+      scrollHeight,
+      clientHeight,
+      canScrollUp: canUp,
+      canScrollDown: canDown,
+      isScrollable: scrollHeight > clientHeight,
+      difference: scrollHeight - clientHeight
+    });
+
+    setCanScrollUp(canUp);
+    setCanScrollDown(canDown);
+  }, [containerRef, instanceId]);
 
   // Monitor scroll events
   React.useEffect(() => {
@@ -111,20 +130,27 @@ export function ScrollControls({
 
   // Hide controls if auto-hide is enabled and can't scroll
   if (autoHide && !canScrollUp && !canScrollDown) {
+    console.log(`[ScrollControls ${instanceId}] Hidden due to auto-hide - no scrollable content`);
     return null;
   }
+
+  console.log(`[ScrollControls ${instanceId}] Rendering controls`, { canScrollUp, canScrollDown, autoHide, position });
 
   return (
     <div
       className={cn(
-        'fixed z-50 flex flex-col gap-2',
+        'fixed z-50 flex flex-col gap-2 md:gap-3',
         // Position on screen - adjusted to sit above bottom nav
-        // Using top positioning to center in available space (excluding bottom nav)
-        // Bottom nav height: 112px mobile, 96px tablet/desktop
-        'top-[calc(50%-56px)] md:top-[calc(50%-48px)] -translate-y-1/2',
-        position === 'right' ? 'right-2 md:right-4' : 'left-2 md:left-4',
+        // Bottom nav is ~70px tall, so position controls accounting for that
+        'bottom-24 md:bottom-28',
+        position === 'right' ? 'right-2 md:right-4 lg:right-6' : 'left-2 md:left-4 lg:left-6',
         className
       )}
+      style={{
+        // Debug: temporary red border to verify visibility
+        border: '2px solid red',
+        backgroundColor: 'rgba(255, 0, 0, 0.1)'
+      }}
     >
       {/* Top Button */}
       <button
