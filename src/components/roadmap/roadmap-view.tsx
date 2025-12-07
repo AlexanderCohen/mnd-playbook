@@ -9,6 +9,7 @@ import { VerticalTimeline } from './vertical-timeline';
 import { ScoreSummary } from './score-summary';
 import { StageAlerts } from './stage-alerts';
 import { analyzeTriggers } from '@/lib/utils/stage-triggers';
+import { ScrollControls } from '@/components/ui';
 import { cn } from '@/lib/utils/cn';
 
 export function RoadmapView() {
@@ -21,13 +22,16 @@ export function RoadmapView() {
   } = useAppStore();
 
   const [showHelp, setShowHelp] = React.useState(false);
+  const timelineScrollRef = React.useRef<HTMLDivElement>(null);
   const currentStage = currentStageId ? getStageById(currentStageId) : null;
 
   // Get grouped stages
   const stagesByPathway = getStagesGroupedByPathway(activePathway);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col relative">
+      {/* Scroll Controls for the entire roadmap */}
+      <ScrollControls containerRef={timelineScrollRef} position="right" />
       {/* Header - Compact and clean */}
       <div className="border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-5 lg:py-6">
         <div className="w-full">
@@ -123,7 +127,7 @@ export function RoadmapView() {
       </div>
 
       {/* Main timeline - takes all available space */}
-      <div className="flex-1 min-h-0 overflow-hidden">
+      <div ref={timelineScrollRef} className="flex-1 min-h-0 overflow-auto">
         <VerticalTimeline
           lowerLimbStages={stagesByPathway.lowerLimb}
           bulbarStages={stagesByPathway.bulbar}

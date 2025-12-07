@@ -4,8 +4,7 @@ import { Stage } from '@/types';
 import { PATHWAY_COLORS } from '@/lib/constants/stages';
 import { StageCard } from './stage-card';
 import { StageDetailModal } from './stage-detail-modal';
-import { ScrollControls } from '@/components/ui';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 interface VerticalTimelineProps {
   lowerLimbStages: Stage[];
@@ -25,7 +24,6 @@ export function VerticalTimeline({
   activePathway,
 }: VerticalTimelineProps) {
   const [selectedStage, setSelectedStage] = useState<Stage | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Determine max length and pad shorter pathway
   const maxPathwayLength = Math.max(lowerLimbStages.length, bulbarStages.length);
@@ -42,12 +40,9 @@ export function VerticalTimeline({
   const showBulbar = activePathway === 'all' || activePathway === 'bulbar';
 
   return (
-    <div className="w-full h-full flex flex-col relative">
-      {/* Scroll Controls */}
-      <ScrollControls containerRef={scrollContainerRef} position="right" />
-
+    <div className="w-full h-full flex flex-col">
       {/* Timeline Section */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
+      <div className="flex-1">
         <div className="w-full py-8 md:py-12 px-4 md:px-6 lg:px-8">
           {/* Title */}
           <div className="text-center mb-12 md:mb-16">

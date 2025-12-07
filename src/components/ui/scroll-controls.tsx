@@ -59,16 +59,33 @@ export function ScrollControls({
     const container = containerRef.current;
     if (!container) return;
 
+    // Initial check
     checkScrollPosition();
+
+    // Recheck after a delay to catch late-loading content
+    const delayedCheck = setTimeout(checkScrollPosition, 100);
+    const delayedCheck2 = setTimeout(checkScrollPosition, 500);
+
     container.addEventListener('scroll', checkScrollPosition);
 
-    // Also check on resize
+    // Observe container size changes
     const resizeObserver = new ResizeObserver(checkScrollPosition);
     resizeObserver.observe(container);
 
+    // Also observe content changes (when children are added/removed)
+    const mutationObserver = new MutationObserver(checkScrollPosition);
+    mutationObserver.observe(container, {
+      childList: true,
+      subtree: true,
+      attributes: false,
+    });
+
     return () => {
+      clearTimeout(delayedCheck);
+      clearTimeout(delayedCheck2);
       container.removeEventListener('scroll', checkScrollPosition);
       resizeObserver.disconnect();
+      mutationObserver.disconnect();
     };
   }, [containerRef, checkScrollPosition]);
 
@@ -100,9 +117,11 @@ export function ScrollControls({
   return (
     <div
       className={cn(
-        'fixed z-40 flex flex-col gap-2',
-        // Position on screen
-        'top-1/2 -translate-y-1/2',
+        'fixed z-50 flex flex-col gap-2',
+        // Position on screen - adjusted to sit above bottom nav
+        // Using top positioning to center in available space (excluding bottom nav)
+        // Bottom nav height: 112px mobile, 96px tablet/desktop
+        'top-[calc(50%-56px)] md:top-[calc(50%-48px)] -translate-y-1/2',
         position === 'right' ? 'right-2 md:right-4' : 'left-2 md:left-4',
         className
       )}

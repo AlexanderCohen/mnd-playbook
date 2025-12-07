@@ -25,6 +25,7 @@ export function StageDetailPanel({
 }: StageDetailPanelProps) {
   const [localNote, setLocalNote] = React.useState(note);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   // Save note on blur
   const handleNoteBlur = () => {
@@ -39,7 +40,9 @@ export function StageDetailPanel({
       <div className="fixed inset-0 bg-black/30" onClick={onClose} />
 
       {/* Panel - responsive max width and height */}
-      <div className="relative mx-auto max-w-2xl rounded-t-3xl bg-white shadow-2xl max-h-[85vh] overflow-y-auto">
+      <div ref={scrollContainerRef} className="relative mx-auto max-w-2xl rounded-t-3xl bg-white shadow-2xl max-h-[85vh] overflow-y-auto">
+        {/* Scroll Controls */}
+        <ScrollControls containerRef={scrollContainerRef} position="right" />
         {/* Close button - large target for eye gaze (56x56px) */}
         <button
           onClick={onClose}
